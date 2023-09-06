@@ -8,11 +8,12 @@ services:
       dockerfile: Dockerfile
     env_file:
       - .env
-    #    environment:
-    #      SPRING_DATASOURCE_URL: jdbc:mysql://database:3306/starbucks_db_test?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false&allowPublicKeyRetrieval=true
-    #      SPRING_DATASOURCE_USERNAME: root
-    #      SPRING_DATASOURCE_PASSWORD: 1234
-    #      SPRING_PROFILES_ACTIVE: dev
+    environment:
+      DB_HOSTNAME: postgres
+      DB_PORT: 5432
+      DB_NAME: ${APP_DB_NAME}
+      DB_USERNAME: ${APP_DB_USER}
+      DB_PASSWORD: ${APP_DB_PWD}
     volumes:
       - ./spring-api:/opt/app
     restart: always
@@ -21,6 +22,8 @@ services:
     expose:
       - 8080
       - 5005
+    depends_on:
+      - postgres
   postgres:
     container_name: postgres
     image: postgres:15.4
@@ -34,8 +37,11 @@ services:
     env_file:
       - .env
     environment:
-      POSTGRES_PASSWORD: ${POSTGRES_PWD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER} # 선택 속성으로 POSTGRES_PASSWORD와 함께 사용되며, POSTGRES_USER명으로 superuser가 생성됨(작성하지 않을 경우 postgres 이름으로 superuser 생성)
+      POSTGRES_PASSWORD: ${POSTGRES_PWD} # 필수 속성으로 postgreSQL의 superuser password(비어있거나 선언되지 않으면 안됨)
+      POSTGRES_DB: ${APP_DB_NAME}
+      APP_DB_USER: ${APP_DB_USER}
+      APP_DB_PASS: ${APP_DB_PWD}
     #user: 컨테이너 유저 (설정하지 않으면 root)
     ports:
       - "5432:5432"
@@ -58,3 +64,5 @@ services:
     restart: always
     ports:
       - "3000:3000"
+    depends_on:
+      - spring-api
