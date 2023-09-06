@@ -1,0 +1,9 @@
+[submodule "next-front"]
+	path = next-front
+	url = https://git@github.com:sooyeolPark/next-front.git
+[submodule "postgres"]
+	path = postgres
+	url = https://git@github.com:sooyeolPark/postgres.git
+[submodule "spring-api"]
+	path = spring-api
+	url = https://git@github.com:sooyeolPark/spring-api.git

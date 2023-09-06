@@ -1,0 +1,60 @@
+version: "3.8"
+services:
+  spring-api:
+    container_name: spring-api
+    image: amazoncorretto:17.0.6-alpine
+    build:
+      context: ./spring-api
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    #    environment:
+    #      SPRING_DATASOURCE_URL: jdbc:mysql://database:3306/starbucks_db_test?useSSL=false&serverTimezone=UTC&useLegacyDatetimeCode=false&allowPublicKeyRetrieval=true
+    #      SPRING_DATASOURCE_USERNAME: root
+    #      SPRING_DATASOURCE_PASSWORD: 1234
+    #      SPRING_PROFILES_ACTIVE: dev
+    volumes:
+      - ./spring-api:/opt/app
+    restart: always
+    ports:
+      - "8080:8080"
+    expose:
+      - 8080
+      - 5005
+  postgres:
+    container_name: postgres
+    image: postgres:15.4
+    restart: always
+    build:
+      context: ./postgres
+      dockerfile: Dockerfile
+    volumes:
+      - ./postgres/postgresql/data:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d
+    env_file:
+      - .env
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PWD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    #user: 컨테이너 유저 (설정하지 않으면 root)
+    ports:
+      - "5432:5432"
+    expose:
+      - "5432"
+  next-front:
+    container_name: next-front
+    image: node:18-alpine
+    build:
+      context: ./next-front
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      ENV_VARIABLE: ${ENV_VARIABLE}
+      NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
+    volumes:
+      - ./next-front/src:/app/src
+      - ./next-front/public:/app/public
+    restart: always
+    ports:
+      - "3000:3000"
