@@ -1,30 +1,39 @@
 version: "3.8"
 services:
-#  spring-api:
-#    container_name: spring-api
-#    image: amazoncorretto:17.0.6-alpine
-#    build:
-#      context: ./spring-api
-#      dockerfile: Dockerfile
-#    env_file:
-#      - .env
-#    environment:
-#      DB_HOSTNAME: postgres
-#      DB_PORT: 5432
-#      DB_NAME: ${APP_DB_NAME}
-#      DB_USERNAME: ${APP_DB_USER}
-#      DB_PASSWORD: ${APP_DB_PWD}
-#    volumes:
-#      - ./spring-api:/opt/app
-#    restart: always
-#    ports:
-#      - "8080:8080"
-#    expose:
-#      - 8080
-#      - 5005
-#    depends_on:
-#      postgres:
-#        condition: service_healthy
+  nginx-proxy:
+    container_name: "nginx-proxy"
+    user: "root"
+    image: nginx:latest
+    ports:
+      - "80:80"
+    restart: always
+    volumes:
+      - ./nginx-proxy/nginx.conf:/etc/nginx/nginx.conf
+  spring-api:
+    container_name: spring-api
+    image: amazoncorretto:17.0.6-alpine
+    build:
+      context: ./spring-api
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      DB_HOSTNAME: postgres
+      DB_PORT: 5432
+      DB_NAME: ${APP_DB_NAME}
+      DB_USERNAME: ${APP_DB_USER}
+      DB_PASSWORD: ${APP_DB_PWD}
+    volumes:
+      - ./spring-api:/opt/app
+    restart: always
+    expose:
+      - 8080
+      - 5005
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
   postgres:
     container_name: postgres
     image: postgres:15.4
@@ -43,32 +52,29 @@ services:
       APP_DB_USER: ${APP_DB_USER}
       APP_DB_PWD: ${APP_DB_PWD}
 #    user: 컨테이너 유저 (설정하지 않으면 root)
-    ports:
-      - "5432:5432"
     expose:
-      - "5432"
+      - 5432
     healthcheck:
-      #CHANGE 1: this command checks if the database is ready, right on the source db server
       test: pg_isready -d ${APP_DB_NAME}
       interval: 5s
       timeout: 5s
       retries: 5
-#  next-front:
-#    container_name: next-front
-#    image: node:18-alpine
-#    build:
-#      context: ./next-front
-#      dockerfile: Dockerfile
-#    env_file:
-#      - .env
-#    environment:
-#      ENV_VARIABLE: ${ENV_VARIABLE}
-#      NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
-#    volumes:
-#      - ./next-front/src:/app/src
-#      - ./next-front/public:/app/public
-#    restart: always
-#    ports:
-#      - "3000:3000"
-#    depends_on:
-#      - spring-api
+  next-front:
+    container_name: next-front
+    image: node:18-alpine
+    build:
+      context: ./next-front
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      ENV_VARIABLE: ${ENV_VARIABLE}
+      NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
+    volumes:
+      - ./next-front/src:/app/src
+      - ./next-front/public:/app/public
+    restart: always
+    expose:
+      - 3000
+    depends_on:
+      - spring-api
