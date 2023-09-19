@@ -33,8 +33,8 @@ services:
       - 8080
       - 5005
 # local에서 사용할거면 쓰기
-#    ports:
-#      - "8080:8080"
+    ports:
+      - "5005:5005"
     depends_on:
       postgres:
         condition: service_healthy
