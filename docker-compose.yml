@@ -16,10 +16,10 @@ services:
     container_name: spring-api
     image: amazoncorretto:17.0.6-alpine #mac에서 에러가 난다면 CPU에 따라 17버전 다른 이미지를 사용
     build:
-      context: ./spring-api
+      context: ./spring-api/docker-setting
       dockerfile: Dockerfile
     volumes:
-      - ./spring-api/jar-path:/home/spring-api
+      - ./spring-api/docker-setting/jar-path:/home/spring-api
     env_file:
       - .env
     environment:
