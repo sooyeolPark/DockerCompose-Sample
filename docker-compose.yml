@@ -19,7 +19,7 @@ services:
       context: ./spring-api/docker-setting
       dockerfile: Dockerfile
     volumes:
-      - ./spring-api/docker-setting/jar-path:/home/spring-api
+      - ./spring-api/docker-setting/jar-path:/home/spring-api/jar-path
     env_file:
       - .env
     environment:
