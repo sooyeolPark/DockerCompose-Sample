@@ -1,17 +1,17 @@
 version: "3.8"
 services:
-#  nginx-proxy:
-#    container_name: "nginx-proxy"
-#    user: "root"
-#    image: nginx:latest
-#    ports:
-#      - "80:80"
-#    restart: always
-#    volumes:
-#      - ./nginx-proxy/nginx.conf:/etc/nginx/nginx.conf
-#    depends_on:
-#      - next-front
-#      - spring-api
+  nginx-proxy:
+    container_name: "nginx-proxy"
+    user: "root"
+    image: nginx:latest
+    ports:
+      - "80:80"
+    restart: always
+    volumes:
+      - ./nginx-proxy/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - next-front
+      - spring-api
   spring-api:
     container_name: spring-api
     image: amazoncorretto:17.0.6-alpine #mac에서 에러가 난다면 CPU에 따라 17버전 다른 이미지를 사용
@@ -33,9 +33,9 @@ services:
       - 8080
       - 5005
 # local에서 사용할거면 쓰기
-    ports:
-      - "5005:5005"
-      - "8080:8080"
+#    ports:
+#      - "5005:5005"
+#      - "8080:8080"
     depends_on:
       postgres:
         condition: service_healthy
@@ -63,22 +63,22 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
-#  next-front:
-#    container_name: next-front
-#    image: node:18-alpine
-#    build:
-#      context: ./next-front
-#      dockerfile: Dockerfile
-#    env_file:
-#      - .env
-#    environment:
-#      ENV_VARIABLE: ${ENV_VARIABLE}
-#      NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
-#    volumes:
-#      - ./next-front/src:/app/src
-#      - ./next-front/public:/app/public
-#    restart: always
-#    expose:
-#      - 3000
-#    depends_on:
-#      - spring-api
+  next-front:
+    container_name: next-front
+    image: node:18-alpine
+    build:
+      context: ./next-front
+      dockerfile: Dockerfile
+    env_file:
+      - .env
+    environment:
+      ENV_VARIABLE: ${ENV_VARIABLE}
+      NEXT_PUBLIC_ENV_VARIABLE: ${NEXT_PUBLIC_ENV_VARIABLE}
+    volumes:
+      - ./next-front/src:/app/src
+      - ./next-front/public:/app/public
+    restart: always
+    expose:
+      - 3000
+    depends_on:
+      - spring-api
