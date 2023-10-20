@@ -57,6 +57,9 @@ services:
 #    user: 컨테이너 유저 (설정하지 않으면 root)
     expose:
       - 5432
+    #DB 툴에서 붙어야 될 경우를 생각하여 Port 열어놓음
+    ports:
+      - "5432:5432"
     healthcheck:
       test: pg_isready -d ${APP_DB_NAME}
       interval: 5s
