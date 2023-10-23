@@ -39,3 +39,8 @@
          1. docker volume의 파일 변경은 컨테이너 내의 파일시스템으로 catch할수 없기때문에 shell script를 이용
       6. 때문에 local에 있는 프로젝트를 빌드만 하면 docker 컨테이너 안에 바로 반영이 됨
       7. 실제 dev나 상용에서는 jenkins를 이용하는게 좋기때문에 local 환경에서만 의미가 있음
+
+
+***
+** docker image는 보통 linux 계열이기 때문에 Local환경이 Window라면 shell script들이 CRLF설정으로 자동으로 변경되어 shell script를 실행하지 못하는 경우가 생긴다.ㅏ
+본인 local환경이 Window라면 Docker 설정하는 shell script를 LF 형식으로 모두 바꿔주어야한다.
